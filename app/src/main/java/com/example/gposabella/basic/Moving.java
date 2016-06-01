@@ -12,109 +12,52 @@ import android.view.WindowManager;
  * Created by gposabella on 30/05/2016.
  */
 public class Moving {
-    private static int screenWidth = 0;
-    private static int screenHeight = 0;
-    private final Context context;
-    private final Bitmap mbitmap;
-    private final int imgWidth;
-    private final int imgHeight;
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
-    private int step = 10;
+    private Chunk chunk;
 
+    private int finx;
+    private int finy;
 
-    public Moving(Context context, int x, int y, int dx, int dy) {
-        this.context = context;
-        getDims();
-        mbitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.skull);
-        imgWidth = mbitmap.getWidth();
-        imgHeight = mbitmap.getHeight();
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = dy;
+    private int curx;
+    private int cury;
+
+    public Moving(Chunk c, int startx, int starty, int finalx, int finaly) {
+        chunk=c;
+        curx = startx;
+        cury = starty;
+        finx = finalx;
+        finy = finaly;
     }
 
-    public void moveNext() {
-        int vx = dx * step;
-        int vy = dy * step;
+    public void nextStep() {
+        int delta = 5;
+        int dx=0; int dy=0;
 
+        int min = dist(finx, finy, curx - delta, cury);
+        int d1 = dist(finx, finy, curx - delta, cury - delta);
+        if( d1<min){dx=-delta;dy=-delta; min=d1;}
+        d1 = dist(finx, finy, curx - delta, cury + delta);
+        if( d1<min){dx=-delta;dy=delta; min=d1;}
 
-        if (x + vx < 0) {
-            invertDx();
-            return;
-        }
-        if (y + vy < 0) {
-            invertDy();
-            return;
-        }
-        if (x + vx > screenWidth - imgWidth) {
-            invertDx();
-            return;
-        }
-        if (y + vy > screenHeight - imgHeight) {
-            invertDy();
-            return;
-        }
-        x += vx;
-        y += vy;
+        d1 = dist(finx, finy, curx + delta, cury);
+        if( d1<min){dx=delta;dy=0; min=d1;}
+        d1 = dist(finx, finy, curx + delta, cury - delta);
+        if( d1<min){dx=delta;dy=-delta; min=d1;}
+        d1 = dist(finx, finy, curx + delta, cury + delta);
+        if( d1<min){dx=delta;dy=delta; min=d1;}
+        d1 = dist(finx, finy, curx, cury - delta);
+        if( d1<min){dx=0;dy=-delta; min=d1;}
+        d1 = dist(finx, finy, curx, cury + delta);
+        if( d1<min){dx=0;dy=delta; min=d1;}
+
+        curx+=dx;
+        cury+=dy;
+
+        chunk.setX(curx);
+        chunk.setX(cury);
+
     }
 
-    public void makeDrow(Canvas canvas) {
-        canvas.drawBitmap(mbitmap, x, y, null);
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getDy() {
-        return dy;
-    }
-
-    public int getDx() {
-        return dx;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setDy(int dy) {
-        this.dy = dy;
-    }
-
-    public void setDx(int dx) {
-        this.dx = dx;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public void invertDx() {
-        dx = -dx;
-    }
-
-    public void invertDy() {
-        dy = -dy;
-    }
-
-    private void getDims() {
-        if (screenWidth != 0) return;
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-
-        display.getSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
+    private int dist(int ax, int ay, int bx, int by) {
+        return (ax - bx) * (ax - bx) + (ay - by) * (ay - by);
     }
 }

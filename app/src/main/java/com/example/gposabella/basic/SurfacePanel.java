@@ -93,6 +93,8 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
     }
 
+    private List<Moving> transiti = new ArrayList<Moving>();
+
 
     void doDraw(Canvas canvas) {
         Paint paint = new Paint();
@@ -105,6 +107,10 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
             canvas.drawBitmap(c.getBitmap(), c.getX(), c.getY(), null);
             canvas.drawLine(c.getX(), c.getY(), c.getX() + c.getWidth(), c.getY(), paint);
             canvas.drawLine(c.getX(), c.getY(), c.getX(), c.getY() + c.getHeight(), paint);
+        }
+
+        for( Moving m:transiti){
+            m.nextStep();
         }
     }
 
@@ -163,18 +169,8 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
     private void scambia(Chunk c1, Chunk c2, boolean slow) {
 
-      /*  if (slow) {
 
-            int d = c1.getX()<c2.getX()?1:-1;
-            for (int i = c1.getX(); i < c2.getX(); i=i+d) {
-                c1.setX(i);
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }*/
+    //    transiti.add( new Moving(c1,c1.getX(),c1.getY(),c2.getX(),c2.getY()  ));
         int xf = c1.getX();
         int yf = c1.getY();
         int posf = c1.getPosAttuale();
@@ -197,12 +193,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
                 Chunk p = getChunk(x, y);
                 if (first == null) first = p;
                 else {
-//                    int xf=first.getX();
-//                    int yf=first.getY();
-//                    first.setX(p.getX());
-//                    first.setY(p.getY());
-//                    p.setX(xf);
-//                    p.setY(yf);
+
                     scambia(first, p, true);
                     checkFine();
                     first = null;

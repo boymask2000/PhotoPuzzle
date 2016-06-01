@@ -17,13 +17,8 @@ public class Board {
     private int chunkHeight;
     private int chunkWidth;
 
-    private void init() {
-
-    }
-
     public Board(Context context) {
         this.context = context;
-        init();
     }
 
 

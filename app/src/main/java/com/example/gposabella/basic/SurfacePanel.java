@@ -90,18 +90,64 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
     private List<Moving> transiti = new ArrayList<Moving>();
 
+    int i = 0;
+
+    private void solve() throws InterruptedException {
+        if (i >= lista.size()) return;
+        Chunk c = lista.get(i++);
+        //   for (Chunk c : lista) {
+
+        int pos = c.getPosCorretta();
+        if (pos != c.getPosAttuale()) {
+            for (Chunk d : lista) {
+                if (d.getPosAttuale() == pos) {
+
+                    MotionEvent motionEvent = MotionEvent.obtain(
+                            10,
+                            19,
+                            MotionEvent.ACTION_DOWN,
+                            c.getX()+1,
+                            c.getY()+1,
+                            0
+                    );
+
+// Dispatch touch event to view
+                    this.dispatchTouchEvent(motionEvent); Thread.sleep(1000);
+                    motionEvent = MotionEvent.obtain(
+                            10,
+                            19,
+                            MotionEvent.ACTION_DOWN,
+                            d.getX()+1,
+                            d.getY()+1,
+                            0
+                    );
+
+// Dispatch touch event to view
+                    this.dispatchTouchEvent(motionEvent);
+
+            /*        c.setSelected(true);
+                    d.setSelected(true);
+
+                    scambia(c, d, true);
+
+
+                        Thread.sleep(1000);
+
+                    c.setSelected(false);
+                    d.setSelected(false);*/
+                    break;
+                }
+            }
+        }
+        //   }
+    }
 
     void doDraw(Canvas canvas) {
         List<Chunk> ll = new ArrayList<Chunk>();
 
-        Paint paint = new Paint();
-        paint.setColor(Color.rgb(255, 153, 51));
-        paint.setStrokeWidth(10);
-        //  Bitmap     q=getResizedBitmap(photoBitMap);
-        //     canvas.drawBitmap(resizedPhotoBitMap, 0, 0, null);
         for (Chunk c : lista) {
             c.draw(canvas);
-            if(c.isSelected())ll.add(c);
+            if (c.isSelected()) ll.add(c);
         }
         for (Chunk c : ll) {
             c.draw(canvas);
@@ -110,6 +156,11 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
         for (Moving m : transiti) {
             m.nextStep();
+        }
+        try {
+            solve();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

@@ -163,7 +163,6 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
     private void scambia(Chunk c1, Chunk c2, boolean slow) {
 
-
       /*  if (slow) {
 
             int d = c1.getX()<c2.getX()?1:-1;

@@ -31,8 +31,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
     private final int imgHeight;
     private final Bitmap resizedPhotoBitMap;
     private final List<Chunk> lista;
-    private final int chunkHeight;
-    private final int chunkWidth;
+
     private Bitmap photoBitMap;
     private MyThread mythread;
     private int screenWidth;
@@ -50,7 +49,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         board = new Board(context);
 
         getDims();
-        init();
+
 //the bintitmap Bitmapwe wish to draw
         photoBitMap = BitmapFactory.decodeResource(context.getResources(), R.drawable.gatto);
 
@@ -61,8 +60,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         resizedPhotoBitMap = getResizedBitmap(photoBitMap);
         holder.addCallback(this);
         lista = randomize(board.prepareImage(resizedPhotoBitMap));
-        chunkHeight = board.getChunkHeight();
-        chunkWidth = board.getChunkWidth();
+
     }
 
     private List<Chunk> randomize(List<Chunk> ll) {
@@ -89,27 +87,28 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         return out;
     }
 
-    private void init() {
-
-    }
 
     private List<Moving> transiti = new ArrayList<Moving>();
 
 
     void doDraw(Canvas canvas) {
+        List<Chunk> ll = new ArrayList<Chunk>();
+
         Paint paint = new Paint();
         paint.setColor(Color.rgb(255, 153, 51));
         paint.setStrokeWidth(10);
         //  Bitmap     q=getResizedBitmap(photoBitMap);
         //     canvas.drawBitmap(resizedPhotoBitMap, 0, 0, null);
         for (Chunk c : lista) {
+            c.draw(canvas);
+            if(c.isSelected())ll.add(c);
+        }
+        for (Chunk c : ll) {
+            c.draw(canvas);
 
-            canvas.drawBitmap(c.getBitmap(), c.getX(), c.getY(), null);
-            canvas.drawLine(c.getX(), c.getY(), c.getX() + c.getWidth(), c.getY(), paint);
-            canvas.drawLine(c.getX(), c.getY(), c.getX(), c.getY() + c.getHeight(), paint);
         }
 
-        for( Moving m:transiti){
+        for (Moving m : transiti) {
             m.nextStep();
         }
     }
@@ -170,7 +169,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
     private void scambia(Chunk c1, Chunk c2, boolean slow) {
 
 
-    //    transiti.add( new Moving(c1,c1.getX(),c1.getY(),c2.getX(),c2.getY()  ));
+        //    transiti.add( new Moving(c1,c1.getX(),c1.getY(),c2.getX(),c2.getY()  ));
         int xf = c1.getX();
         int yf = c1.getY();
         int posf = c1.getPosAttuale();
@@ -191,11 +190,17 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Chunk p = getChunk(x, y);
+                p.setSelected(true);
                 if (first == null) first = p;
                 else {
-
+                    try {
+                        Thread.sleep(700);
+                    } catch (InterruptedException e) {
+                    }
                     scambia(first, p, true);
                     checkFine();
+                    p.setSelected(false);
+                    first.setSelected(false);
                     first = null;
                 }
 

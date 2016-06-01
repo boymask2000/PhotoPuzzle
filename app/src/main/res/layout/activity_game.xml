@@ -3,16 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center|top"
-    android:orientation="vertical" >
-<Button android:text="Bottone 1"
+    android:orientation="vertical">
+
+    <Button
         android:id="@+id/bottone1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Button >
+        android:layout_height="wrap_content"
+        android:text="Scegli immagine"></Button>
 
-    <Button android:text="Bottone 2"
+    <Button
         android:id="@+id/bottone2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
+        android:layout_height="wrap_content"
+        android:text="Start"></Button>
 </LinearLayout>

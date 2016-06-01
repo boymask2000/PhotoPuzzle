@@ -2,7 +2,6 @@ package com.example.gposabella.basic;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +51,5 @@ public class Board {
             yCoord += chunkHeight;
         }
         return lista;
-    }
-
-    public int getChunkHeight() {
-        return chunkHeight;
-    }
-
-    public int getChunkWidth() {
-        return chunkWidth;
     }
 }

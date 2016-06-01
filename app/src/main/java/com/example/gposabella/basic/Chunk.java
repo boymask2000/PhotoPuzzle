@@ -1,6 +1,9 @@
 package com.example.gposabella.basic;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 /**
  * Created by gposabella on 01/06/2016.
@@ -15,6 +18,10 @@ public class Chunk {
 
     private int posCorretta;
     private int posAttuale;
+
+
+
+    private boolean selected=false;
 
     public Chunk(Bitmap bitmap, int x, int y, int w, int h) {
         this.bitmap = bitmap;
@@ -74,4 +81,24 @@ public class Chunk {
         this.posAttuale = posAttuale;
     }
 
+    public void draw( Canvas canvas ){
+        Paint paint = new Paint();
+
+        paint.setColor(selected?Color.RED:Color.rgb(255, 153, 51));
+        paint.setStrokeWidth(10);
+        canvas.drawBitmap(getBitmap(), getX(), getY(), null);
+        canvas.drawLine(getX(), getY(), getX() + getWidth(), getY(), paint);
+        canvas.drawLine(getX(), getY(), getX(), getY() + getHeight(), paint);
+
+        canvas.drawLine(getX()+ getWidth(), getY(), getX() + getWidth(), getY()+ getHeight(), paint);
+        canvas.drawLine(getX(), getY()+ getHeight(), getX() + getWidth(), getY()+ getHeight(), paint);
+    }
+
+    public void setSelected(boolean b) {
+
+        selected=b;
+    }
+    public boolean isSelected() {
+        return selected;
+    }
 }

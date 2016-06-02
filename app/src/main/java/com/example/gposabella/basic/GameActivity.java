@@ -1,5 +1,6 @@
 package com.example.gposabella.basic;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
 
     private Button bottone1;
     private Button bottone2;
@@ -47,6 +48,12 @@ public class GameActivity extends AppCompatActivity {
 
         bottone2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if( Heap.getBitmap()==null){
+                    Toast.makeText(GameActivity.this, "Devi scegliere una immagine",
+                            Toast.LENGTH_LONG).show();
+
+                    return;
+                }
                 Intent openPage1 = new Intent(GameActivity.this,MainActivity.class);
 
 
@@ -54,20 +61,7 @@ public class GameActivity extends AppCompatActivity {
             }
         });
     }
- /*   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-            // When an Image is picked
-            if (requestCode == 1 )//&& resultCode == RESULT_OK && null != data)
-            {
-                // Get the Image from data
-
-                Bundle ex = data.getExtras();
-               out = (Bitmap) ex.get("bitmap");
-
-
-        }
-    }*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -94,11 +88,9 @@ public class GameActivity extends AppCompatActivity {
                 Bitmap   finalBitmap = BitmapFactory
                         .decodeFile(imgDecodableString);
 
-//Intent ii = new Intent();
-//                ii.putExtra("bitmap", finalBitmap);
-//                setResult(RESULT_OK,ii);
+
                 Heap.setBitmap(finalBitmap);
-          //      finish();
+
 
             } else {
                 Toast.makeText(this, "You haven't picked Image",

@@ -24,7 +24,7 @@ public class Board {
 
     public List<Chunk> prepareImage(Bitmap bit) {
         List<Chunk> lista = new ArrayList<Chunk>();
-        int chunkNumbers = NROW * NCOL;
+        //int chunkNumbers = NROW * NCOL;
 
         chunkHeight = bit.getHeight() / NROW;
         chunkWidth = bit.getWidth() / NCOL;

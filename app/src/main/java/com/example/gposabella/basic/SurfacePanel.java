@@ -8,12 +8,16 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -26,9 +30,9 @@ import java.util.Random;
  */
 public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback {
     private final Context context;
-    private final Bitmap mbitmap;
-    private final int imgWidth;
-    private final int imgHeight;
+  //  private final Bitmap mbitmap;
+  //  private final int imgWidth;
+  //  private final int imgHeight;
     private final Bitmap resizedPhotoBitMap;
     private final List<Chunk> lista;
 
@@ -38,6 +42,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
     private int screenHeight;
 
     private Board board;
+    private int numMosse=0;
 
     /**
      * parameterizedBitmap constructor for surface panel class
@@ -48,14 +53,15 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         context = ctx;
         board = new Board(context);
 
+
         getDims();
 
 //the bintitmap Bitmapwe wish to draw
         photoBitMap = BitmapFactory.decodeResource(context.getResources(), R.drawable.gatto);
-
-        mbitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.skull);
-        imgWidth = mbitmap.getWidth();
-        imgHeight = mbitmap.getHeight();
+        photoBitMap=Heap.getBitmap();
+       // mbitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.skull);
+      //  imgWidth = mbitmap.getWidth();
+      //  imgHeight = mbitmap.getHeight();
         SurfaceHolder holder = getHolder();
         resizedPhotoBitMap = getResizedBitmap(photoBitMap);
         holder.addCallback(this);
@@ -77,7 +83,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
             int ii = (int) (Math.random() * indexes.size());
 
             int index = indexes.get(ii);
-            System.out.println("ii= " + index);
+
             indexes.remove(ii);
             out.add(ll.get(index));
             count++;
@@ -125,16 +131,6 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 // Dispatch touch event to view
                     this.dispatchTouchEvent(motionEvent);
 
-            /*        c.setSelected(true);
-                    d.setSelected(true);
-
-                    scambia(c, d, true);
-
-
-                        Thread.sleep(1000);
-
-                    c.setSelected(false);
-                    d.setSelected(false);*/
                     break;
                 }
             }
@@ -157,11 +153,11 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         for (Moving m : transiti) {
             m.nextStep();
         }
-        try {
+      /*  try {
             solve();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public Bitmap getResizedBitmap(Bitmap bm) {
@@ -180,16 +176,39 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         bm.recycle();
         return resizedBitmap;
     }
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 
+    public int getNavigationBarHeight()
+    {
+        boolean hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey();
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0 )//&& !hasMenuKey)
+        {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
     private void getDims() {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
 
-        display.getSize(size);
+
+            display.getSize(size);
+
+        int v1 = getStatusBarHeight();
+        int v2 = getNavigationBarHeight();
+
         screenWidth = size.x;
-        screenHeight = size.y;
+        screenHeight = size.y-v1-v2;
     }
 
     @Override
@@ -240,6 +259,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                numMosse++;
                 Chunk p = getChunk(x, y);
                 p.setSelected(true);
                 if (first == null) first = p;
@@ -275,7 +295,7 @@ public class SurfacePanel extends SurfaceView implements SurfaceHolder.Callback 
         for (Chunk c : lista) {
             if (c.getPosAttuale() != c.getPosCorretta()) return;
         }
-        System.out.println("PPPPPPPPPPPP");
+       PopupMessage.info(context, "Bravo! Completato in "+numMosse+" mosse");
     }
 
     public Chunk getChunk(float x, float y) {
